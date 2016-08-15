@@ -1,0 +1,8 @@
+*.cmake
+Makefile
+CMakeCache.txt
+.idea
+CMakeFiles/
+Testing/
+bin/
+build/
