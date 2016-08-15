@@ -1,0 +1,6 @@
+[requires]
+Poco/1.7.3@lasote/stable
+gtest/1.7.0@lasote/stable
+
+[generators]
+cmake
