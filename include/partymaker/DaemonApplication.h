@@ -6,11 +6,19 @@
 #define PARTYMAKER_DAEMONAPPLICATION_H
 
 #include "Poco/Util/ServerApplication.h"
+#include "Poco/Util/Timer.h"
+
+using Poco::Util::Timer;
 
 class DaemonApplication: public Poco::Util::ServerApplication {
+public:
+  DaemonApplication();
+  virtual ~DaemonApplication();
 protected:
   virtual int main(const std::vector<std::string> &args) override;
-
+  virtual void initialize(Application &self) override;
+private:
+  Timer download_timer_;
 };
 
 
