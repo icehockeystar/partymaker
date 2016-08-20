@@ -17,6 +17,8 @@ class DownloadMeasureTask {
  private:
   const char* kDownloadHost = "www.speedtestx.de";
   const char* kDownloadResource = "/testfiles/data_256mb.test";
+  void test_download_speed();
+  void test_upload_speed();
  public:
   void callback(TimerTask &task);
 };
