@@ -11,13 +11,13 @@
 using Poco::Util::Timer;
 
 class DaemonApplication: public Poco::Util::ServerApplication {
-public:
+ public:
   DaemonApplication();
   virtual ~DaemonApplication();
-protected:
+ protected:
   virtual int main(const std::vector<std::string> &args) override;
   virtual void initialize(Application &self) override;
-private:
+ private:
   Timer download_timer_;
 };
 
