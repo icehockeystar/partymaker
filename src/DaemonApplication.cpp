@@ -25,7 +25,7 @@ void DaemonApplication::initialize(Application &self) {
   DownloadMeasureTask task;
   TimerTask::Ptr ptr = new TimerTaskAdapter<DownloadMeasureTask>(
           task, &DownloadMeasureTask::callback);
-  download_timer_.schedule(ptr, 1000, 30000);
+  download_timer_.schedule(ptr, 1000, 600000);
 }
 
 int DaemonApplication::main(const std::vector<std::string> &args) {
