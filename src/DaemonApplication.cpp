@@ -1,11 +1,13 @@
 //
-// Created by roman.tuchin on 14.08.16.
+// Copyright 2016 Roman Tuchin
 //
-
+#include <iostream>
+#include <string>
+#include <vector>
 #include "Poco/Util/TimerTaskAdapter.h"
 #include "partymaker/DaemonApplication.h"
 #include "partymaker/DownloadMeasureTask.h"
-#include "iostream"
+
 
 
 using Poco::Util::Application;
@@ -21,8 +23,9 @@ DaemonApplication::DaemonApplication() {
 void DaemonApplication::initialize(Application &self) {
   logger().information("init sheduled tasks");
   DownloadMeasureTask task;
-  TimerTask::Ptr ptr = new TimerTaskAdapter<DownloadMeasureTask>(task, &DownloadMeasureTask::onTimer);
-  download_timer_.schedule(ptr, 1000, 3000);
+  TimerTask::Ptr ptr = new TimerTaskAdapter<DownloadMeasureTask>(
+          task, &DownloadMeasureTask::callback);
+  download_timer_.schedule(ptr, 1000, 30000);
 }
 
 int DaemonApplication::main(const std::vector<std::string> &args) {

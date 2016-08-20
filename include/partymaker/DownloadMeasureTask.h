@@ -5,16 +5,21 @@
 #ifndef PARTYMAKER_DOWNLOADMEASURETASK_H
 #define PARTYMAKER_DOWNLOADMEASURETASK_H
 
-#include <Poco/Util/TimerTask.h>
-#include <Poco/Util/Application.h>
+#include <string>
+#include "Poco/Util/TimerTask.h"
+#include "Poco/Util/Application.h"
 
 using Poco::Util::TimerTask;
 using Poco::Util::Application;
+using std::string;
 
 class DownloadMeasureTask {
-public:
-  void onTimer(TimerTask& task);
+ private:
+  const char* kDownloadHost = "www.speedtestx.de";
+  const char* kDownloadResource = "/testfiles/data_256mb.test";
+ public:
+  void callback(TimerTask &task);
 };
 
 
-#endif //PARTYMAKER_DOWNLOADMEASURETASK_H
+#endif  //  PARTYMAKER_DOWNLOADMEASURETASK_H
