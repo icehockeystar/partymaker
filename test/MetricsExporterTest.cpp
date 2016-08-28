@@ -4,7 +4,6 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <partymaker/DownloadMeasureTask.h>
-#include "partymaker/MetricsExporter.h"
 
 TEST(MetricsExporter, WriteSomeMetric) {
   MetricsExporter metrics_exporter;
