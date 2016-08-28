@@ -2,8 +2,8 @@
 // Created by roman.tuchin on 15.08.16.
 //
 
-#ifndef PARTYMAKER_DOWNLOADMEASURETASK_H
-#define PARTYMAKER_DOWNLOADMEASURETASK_H
+#ifndef INCLUDE_PARTYMAKER_DOWNLOADMEASURETASK_H_
+#define INCLUDE_PARTYMAKER_DOWNLOADMEASURETASK_H_
 
 #include <string>
 #include "Poco/Util/TimerTask.h"
@@ -24,4 +24,4 @@ class DownloadMeasureTask {
 };
 
 
-#endif  //  PARTYMAKER_DOWNLOADMEASURETASK_H
+#endif  //  INCLUDE_PARTYMAKER_DOWNLOADMEASURETASK_H_
