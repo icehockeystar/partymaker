@@ -12,15 +12,14 @@ using std::unordered_map;
 
 class MetricsExporter {
  public:
-  static const char WIFI_SPEED_MEASUREMENT[];
   void export_measurement(const string& measurement,
-      const unordered_map<string, string>& tags,
-      const unordered_map<string, int64_t>& fields);
+                          const unordered_map<string, string>& tags,
+                          const unordered_map<string, float>& fields);
  private:
   static const char METRICS_SERVER_URL[];
   string prepare_metrics_request_body(const string& measurement,
                                   const unordered_map<string, string>& tags,
-                                  const unordered_map<string, int64_t>& fields);
+                                  const unordered_map<string, float>& fields);
 };
 
 #endif  //  INCLUDE_PARTYMAKER_METRICSEXPORTER_H_

@@ -25,6 +25,13 @@ using std::ifstream;
 using Poco::StreamCopier;
 using Poco::Stopwatch;
 
+const char DownloadMeasureTask::WIFI_SPEED_MEASUREMENT[] = "wifi_speed";
+
+DownloadMeasureTask::DownloadMeasureTask() {
+  Application::instance().logger()
+          .information("DownloadMeasureTask ctor calling...");
+}
+
 void DownloadMeasureTask::callback(TimerTask &task) {
   Application::instance().logger()
           .information("Measuring download/upload speed...");
@@ -44,7 +51,7 @@ void DownloadMeasureTask::test_download_speed() {
   HTTPResponse download_response;
   istream& download_stream =
           download_client.receiveResponse(download_response);
-  Application::instance().logger().information("Got status "
+  Application::instance().logger().debug("Got status "
                        + std::to_string(download_response.getStatus()));
   ofstream downloaded_file_stream;
   downloaded_file_stream.open(file_name);
@@ -54,19 +61,30 @@ void DownloadMeasureTask::test_download_speed() {
   stopwatch.stop();
   downloaded_file_stream.close();
 
-  float speedMbps = kDataSizeMb * 8 / stopwatch.elapsedSeconds();
+  float speed_Mbps = kDataSizeMb * 8 / stopwatch.elapsedSeconds();
   Application::instance().logger()
           .information("Download finished. Downloaded in "
                        + std::to_string(stopwatch.elapsedSeconds())
-                       + "s (" + std::to_string(speedMbps) + " Mbps)");
+                       + "s (" + std::to_string(speed_Mbps) + " Mbps)");
+  export_wifi_speed_metric(speed_Mbps);
   // TODO(roman_tuchin) check md5 checksum
+}
+
+void DownloadMeasureTask::export_wifi_speed_metric(float speed_Mbps) {
+  unordered_map<string, string> wifi_speed_tags_map;
+  unordered_map<string, float> wifi_speed_fields_map;
+  wifi_speed_tags_map.emplace("room", "детская_спальня");
+  wifi_speed_tags_map.emplace("device", "lenovo_laptop");
+  wifi_speed_fields_map.emplace("value", speed_Mbps);
+  metrics_exporter.export_measurement(WIFI_SPEED_MEASUREMENT,
+                                      wifi_speed_tags_map,
+                                      wifi_speed_fields_map);
 }
 
 void DownloadMeasureTask::test_upload_speed() {
   Application::instance().logger()
           .information("Testing upload...");
   HTTPClientSession upload_client("www.speedtestx.de");
-  const int kDataSizeMb = 50;
   const string file_name = "data_1mb.test";
   HTTPRequest upload_request(HTTPRequest::HTTP_POST,
                                "/testfiles/" + file_name);

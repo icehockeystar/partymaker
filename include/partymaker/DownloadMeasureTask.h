@@ -8,6 +8,7 @@
 #include <string>
 #include "Poco/Util/TimerTask.h"
 #include "Poco/Util/Application.h"
+#include "partymaker/MetricsExporter.h"
 
 using Poco::Util::TimerTask;
 using Poco::Util::Application;
@@ -15,11 +16,13 @@ using std::string;
 
 class DownloadMeasureTask {
  private:
-  const char* kDownloadHost = "www.speedtestx.de";
-  const char* kDownloadResource = "/testfiles/data_256mb.test";
+  MetricsExporter metrics_exporter;
   void test_download_speed();
+  void export_wifi_speed_metric(float speed_Mbps);
   void test_upload_speed();
  public:
+  DownloadMeasureTask();
+  static const char WIFI_SPEED_MEASUREMENT[];
   void callback(TimerTask &task);
 };
 
