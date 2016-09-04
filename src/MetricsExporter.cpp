@@ -34,7 +34,6 @@ void MetricsExporter::export_measurement(const string &measurement,
   metrics_client.sendRequest(insert_metric_request) << body;
   HTTPResponse insert_metric_response;
   metrics_client.receiveResponse(insert_metric_response);
-  std::cout << std::to_string(insert_metric_response.getStatus()) << std::endl;
   if (insert_metric_response.getStatus() !=
           HTTPResponse::HTTPStatus::HTTP_NO_CONTENT) {
     throw std::runtime_error("Insert metric response hasn't returned 204");
@@ -69,6 +68,5 @@ string MetricsExporter::prepare_metrics_request_body(const string &measurement,
     }
   }
 
-  std::cout << string_stream.str() << std::endl;
   return string_stream.str();
 }
