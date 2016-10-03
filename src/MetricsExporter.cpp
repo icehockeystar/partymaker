@@ -8,10 +8,12 @@
 #include <fstream>
 #include <iterator>
 #include <algorithm>
+#include <exception>
 #include "Poco/Net/HTTPRequest.h"
 #include "partymaker/MetricsExporter.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPResponse.h"
+#include "Poco/Util/Application.h"
 
 using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPRequest;
@@ -19,6 +21,8 @@ using Poco::Net::HTTPResponse;
 using std::ostringstream;
 using std::copy;
 using std::pair;
+using Poco::Util::Application;
+using std::exception;
 
 const char MetricsExporter::METRICS_SERVER_URL[] =
         "localhost";
@@ -31,12 +35,17 @@ void MetricsExporter::export_measurement(const string &measurement,
   string body = prepare_metrics_request_body(measurement, tags, fields);
   // it's very important for influxdb server to set content length
   insert_metric_request.setContentLength(body.length());
-  metrics_client.sendRequest(insert_metric_request) << body;
-  HTTPResponse insert_metric_response;
-  metrics_client.receiveResponse(insert_metric_response);
-  if (insert_metric_response.getStatus() !=
-          HTTPResponse::HTTPStatus::HTTP_NO_CONTENT) {
-    throw std::runtime_error("Insert metric response hasn't returned 204");
+  try {
+    metrics_client.sendRequest(insert_metric_request) << body;
+    HTTPResponse insert_metric_response;
+    metrics_client.receiveResponse(insert_metric_response);
+    if (insert_metric_response.getStatus() !=
+            HTTPResponse::HTTPStatus::HTTP_NO_CONTENT) {
+      throw std::runtime_error("Insert metric response hasn't returned 204");
+    }
+  } catch (exception &e) {
+    Application::instance().logger().warning("metric server is not avalable");
+    Application::instance().logger().warning(e.what());
   }
 }
 
