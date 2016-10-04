@@ -3,7 +3,6 @@
 //
 #include <string>
 #include <iostream>
-#include <Poco/StreamCopier.h>
 #include <sstream>
 #include <fstream>
 #include <iterator>
@@ -14,6 +13,8 @@
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPResponse.h"
 #include "Poco/Util/Application.h"
+#include "Poco/StreamCopier.h"
+
 
 using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPRequest;
@@ -30,7 +31,12 @@ const char MetricsExporter::METRICS_SERVER_URL[] =
 void MetricsExporter::export_measurement(const string &measurement,
                                  const unordered_map<string, string> &tags,
                                  const unordered_map<string, float> &fields) {
-  HTTPClientSession metrics_client(METRICS_SERVER_URL, 8086);
+  Application &application = Application::instance();
+
+  const string &metrics_server = application.config().getString(
+            "metrics.server", METRICS_SERVER_URL);
+  HTTPClientSession metrics_client(metrics_server, 8086);
+  application.logger().information(metrics_server);
   HTTPRequest insert_metric_request(HTTPRequest::HTTP_POST, "/write?db=mydb");
   string body = prepare_metrics_request_body(measurement, tags, fields);
   // it's very important for influxdb server to set content length
@@ -44,8 +50,8 @@ void MetricsExporter::export_measurement(const string &measurement,
       throw std::runtime_error("Insert metric response hasn't returned 204");
     }
   } catch (exception &e) {
-    Application::instance().logger().warning("metric server is not avalable");
-    Application::instance().logger().warning(e.what());
+    application.logger().warning("metric server is not avalable");
+    application.logger().warning(e.what());
   }
 }
 
