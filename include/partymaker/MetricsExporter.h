@@ -12,6 +12,7 @@ using std::unordered_map;
 
 class MetricsExporter {
  public:
+  MetricsExporter();
   void export_measurement(const string& measurement,
                           const unordered_map<string, string>& tags,
                           const unordered_map<string, float>& fields);
@@ -20,6 +21,7 @@ class MetricsExporter {
   string prepare_metrics_request_body(const string& measurement,
                                   const unordered_map<string, string>& tags,
                                   const unordered_map<string, float>& fields);
+  void create_db(const string& db_name);
 };
 
 #endif  //  INCLUDE_PARTYMAKER_METRICSEXPORTER_H_
