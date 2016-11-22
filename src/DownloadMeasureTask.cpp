@@ -54,7 +54,7 @@ void DownloadMeasureTask::test_download_speed() {
   Application::instance().logger().debug("Got status "
                        + std::to_string(download_response.getStatus()));
   ofstream downloaded_file_stream;
-  downloaded_file_stream.open(file_name);
+  downloaded_file_stream.open("/data/partymaker/tmp/" + file_name);
   Stopwatch stopwatch;
   stopwatch.start();
   StreamCopier::copyStream(download_stream, downloaded_file_stream);
