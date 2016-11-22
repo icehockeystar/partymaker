@@ -6,6 +6,7 @@
 #include <vector>
 #include "Poco/Util/TimerTaskAdapter.h"
 #include "Poco/Logger.h"
+#include "Poco/Process.h"
 #include "partymaker/DaemonApplication.h"
 #include "partymaker/DownloadMeasureTask.h"
 
@@ -19,6 +20,8 @@ using Poco::Util::TimerTask;
 using Poco::Util::TimerTaskAdapter;
 using Poco::Logger;
 using Poco::Util::ServerApplication;
+using Poco::Process;
+using Poco::TimerCallback;
 
 DaemonApplication::DaemonApplication() {
   logger().information("ctor calling...");
@@ -30,9 +33,9 @@ void DaemonApplication::initialize(Application &self) {
   ServerApplication::initialize(self);
   logger().information("init sheduled tasks");
   DownloadMeasureTask task;
-  TimerTask::Ptr ptr = new TimerTaskAdapter<DownloadMeasureTask>(
+  TimerCallback<DownloadMeasureTask> timer_callback(
           task, &DownloadMeasureTask::callback);
-  download_timer_.schedule(ptr, 1000, 150000);
+  download_timer_.start(timer_callback);
 }
 
 int DaemonApplication::main(const std::vector<std::string> &args) {

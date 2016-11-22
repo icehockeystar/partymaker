@@ -56,7 +56,8 @@ void MetricsExporter::export_measurement(const string &measurement,
     metrics_client.receiveResponse(insert_metric_response);
     if (insert_metric_response.getStatus() !=
             HTTPResponse::HTTPStatus::HTTP_NO_CONTENT) {
-      throw std::runtime_error("Insert metric response hasn't returned 204");
+      throw std::runtime_error(std::to_string(
+              insert_metric_response.getStatus()));
     }
   } catch (exception &e) {
     log.warning("metric server is not avalable");

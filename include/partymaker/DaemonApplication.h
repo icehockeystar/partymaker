@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 #include "Poco/Util/ServerApplication.h"
-#include "Poco/Util/Timer.h"
+#include "Poco/Timer.h"
 
-using Poco::Util::Timer;
+using Poco::Timer;
 
 class DaemonApplication: public Poco::Util::ServerApplication {
  public:
@@ -20,7 +20,7 @@ class DaemonApplication: public Poco::Util::ServerApplication {
   int main(const std::vector<std::string> &args) override;
   void initialize(Application &self) override;
  private:
-  Timer download_timer_;
+  Timer download_timer_{1000, 150000};
 };
 
 

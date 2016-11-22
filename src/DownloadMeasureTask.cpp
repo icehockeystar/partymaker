@@ -32,7 +32,7 @@ DownloadMeasureTask::DownloadMeasureTask() {
           .information("DownloadMeasureTask ctor calling...");
 }
 
-void DownloadMeasureTask::callback(TimerTask &task) {
+void DownloadMeasureTask::callback(Timer &timer) {
   Application::instance().logger()
           .information("Measuring download/upload speed...");
   test_download_speed();

@@ -6,13 +6,13 @@
 #define INCLUDE_PARTYMAKER_DOWNLOADMEASURETASK_H_
 
 #include <string>
-#include "Poco/Util/TimerTask.h"
+#include "Poco/Timer.h"
 #include "Poco/Util/Application.h"
 #include "partymaker/MetricsExporter.h"
 
-using Poco::Util::TimerTask;
 using Poco::Util::Application;
 using std::string;
+using Poco::Timer;
 
 class DownloadMeasureTask {
  private:
@@ -23,7 +23,7 @@ class DownloadMeasureTask {
  public:
   DownloadMeasureTask();
   static const char WIFI_SPEED_MEASUREMENT[];
-  void callback(TimerTask &task);
+  void callback(Timer &timer);
 };
 
 
