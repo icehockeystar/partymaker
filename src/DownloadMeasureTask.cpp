@@ -12,6 +12,7 @@
 #include "Poco/Net/HTTPResponse.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Stopwatch.h"
+#include "Poco/Logger.h"
 
 using Poco::Thread;
 using Poco::Net::HTTPClientSession;
@@ -24,6 +25,7 @@ using std::ofstream;
 using std::ifstream;
 using Poco::StreamCopier;
 using Poco::Stopwatch;
+using Poco::Logger;
 
 const char DownloadMeasureTask::WIFI_SPEED_MEASUREMENT[] = "wifi_speed";
 
@@ -40,30 +42,40 @@ void DownloadMeasureTask::callback(Timer &timer) {
 }
 
 void DownloadMeasureTask::test_download_speed() {
-  Application::instance().logger()
-          .information("Testing download...");
+  Logger& logger = Application::instance().logger();
+  logger.information("Testing download...");
   HTTPClientSession download_client("www.speedtestx.de");
   const float kDataSizeMb = 50.9;
   const string file_name = "data_50mb.test";
   HTTPRequest download_request(HTTPRequest::HTTP_GET,
                                "/testfiles/" + file_name);
-  download_client.sendRequest(download_request);
+  std::ostream &upload_stream = download_client.sendRequest(download_request);
+  logger.debug("Upload stream: bad = %b, fail = %b",
+                                         upload_stream.bad(),
+                                         upload_stream.fail());
   HTTPResponse download_response;
   istream& download_stream =
           download_client.receiveResponse(download_response);
-  Application::instance().logger().debug("Got status "
+  logger.debug("Got status "
                        + std::to_string(download_response.getStatus()));
   ofstream downloaded_file_stream;
+  // todo файл может не открыться без эксепшона
   downloaded_file_stream.open("/data/partymaker/tmp/" + file_name);
   Stopwatch stopwatch;
   stopwatch.start();
   StreamCopier::copyStream(download_stream, downloaded_file_stream);
   stopwatch.stop();
   downloaded_file_stream.close();
+  int elapsed = stopwatch.elapsedSeconds();
+  float speed_Mbps;
+  try {
+    speed_Mbps = kDataSizeMb * 8 / elapsed;
+  } catch (std::exception& e) {
+    logger.warning("Error during calculating speed: ");
+    logger.warning(e.what());
+  }
 
-  float speed_Mbps = kDataSizeMb * 8 / stopwatch.elapsedSeconds();
-  Application::instance().logger()
-          .information("Download finished. Downloaded in "
+  logger.information("Download finished. Downloaded in "
                        + std::to_string(stopwatch.elapsedSeconds())
                        + "s (" + std::to_string(speed_Mbps) + " Mbps)");
   export_wifi_speed_metric(speed_Mbps);
